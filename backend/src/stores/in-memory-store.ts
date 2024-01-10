@@ -25,13 +25,24 @@ export class InMemoryStore implements Store {
     if (!room) {
       return [];
     }
+
     return room.chats
       .reverse()
       .slice(0, offset)
       .slice(-1 * limit);
   }
 
-  addChat(userId: UserId, name: string, roomId: string, message: string) {
+  addChat({
+    userId,
+    name,
+    roomId,
+    message,
+  }: {
+    userId: string;
+    name: string;
+    roomId: string;
+    message: string;
+  }) {
     if (!this.store.get(roomId)) {
       this.initRoom(roomId);
     }
@@ -44,8 +55,8 @@ export class InMemoryStore implements Store {
       userId,
       name,
       message,
-      upvotes: [],
     };
+
     room.chats.push(chat);
     return chat;
   }

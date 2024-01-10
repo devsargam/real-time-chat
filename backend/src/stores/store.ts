@@ -13,5 +13,15 @@ export abstract class Store {
 
   getChats(room: string, limit: number, offset: number) {}
 
-  addChat(userId: UserId, name: string, room: string, message: string) {}
+  addChat({
+    userId,
+    name,
+    roomId,
+    message,
+  }: {
+    userId: string;
+    name: string;
+    roomId: string;
+    message: string;
+  }) {}
 }
