@@ -1,9 +1,10 @@
-import Sidebar from "./Components/Sidebar";
+import Homepage from "./Components/Homepage/Homepage";
 
 const App = () => {
   return (
     <>
-      <Sidebar />
+      {/* <Sidebar /> */}
+      <Homepage />
     </>
   );
 };
