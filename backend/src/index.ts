@@ -39,7 +39,17 @@ io.on('connection', (socket) => {
   });
 
   socket.on('message', (message: IncomingMessage) => {
+    // @ts-ignore
+    if (message.type === 'USERS_COUNT') {
+      return socket.emit(
+        'message',
+        // @ts-ignore
+        userManager.getUsersCount(message.payload.roomId),
+      );
+    }
+
     if (message.type === SupportedMessage.JoinRoom) {
+      socket.send('Room joined sucessfully');
       return userManager.addUser(
         message.payload.name,
         message.payload.userId,
@@ -91,5 +101,6 @@ io.on('connection', (socket) => {
 });
 
 server.listen(PORT, () => {
+  console.clear();
   console.info(`Server running on port ${PORT}`);
 });

@@ -29,22 +29,34 @@ export class UserManager {
       name,
       socket: socket,
     });
-    socket.on('close', (reasonCode, description) => {
-      this.removeUser(roomId, userId);
+    console.log(this.rooms.get(roomId));
+    socket.on('disconnect', (reasonCode, description) => {
+      console.log({ reasonCode, description });
+      socket.send(this.removeUser(roomId, userId));
     });
   }
 
   removeUser(roomId: string, userId: string) {
     console.log('removed user');
     const users = this.rooms.get(roomId)?.users;
+    console.log(userId);
     if (users) {
       users.filter(({ id }) => id !== userId);
     }
+    return users?.length;
   }
 
   getUser(roomId: string, userId: string): User | null {
     const user = this.rooms.get(roomId)?.users.find(({ id }) => id === userId);
     return user ?? null;
+  }
+
+  getUsers(roomId: string): User[] {
+    return this.rooms.get(roomId)?.users ?? [];
+  }
+
+  getUsersCount(roomId: string): number {
+    return this.rooms.get(roomId)?.users.length ?? 0;
   }
 
   broadcast(roomId: string, userId: string, message: OutgoingMessage) {
