@@ -11,6 +11,9 @@ import {
   ServerToClientEvents,
   ioEvents,
 } from './enums/socket-enum';
+import { handleSendMessage } from './handlers/messages';
+import { handleOnlineUsers } from './handlers/get-users';
+import { handleJoinRoom } from './handlers/join-room';
 dotenv.config();
 
 const app = express();
@@ -31,20 +34,20 @@ app.get('/', (_, res) => {
 
 io.on(ioEvents.CONNECTION, (socket) => {
   socket.on('message', (message: IncomingMessage) => {
+    console.log(message);
     if (message.type === SupportedMessage.GetUsers) {
-      const users = [{ id: 1, name: 'sargam' }];
-      socket.emit('users', users);
+      handleOnlineUsers(io, socket, message.payload);
     }
 
     if (message.type === SupportedMessage.JoinRoom) {
       socket.broadcast.emit('message', 'Room joined sucessfully');
-
-      // Logic to add user
-      return;
+      console.log(2);
+      handleJoinRoom(socket, message.payload);
     }
 
     if (message.type === SupportedMessage.SendMessage) {
-      // Logic to send message
+      handleSendMessage(socket, message.payload);
+      console.log(3);
     }
   });
 
