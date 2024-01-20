@@ -12,8 +12,9 @@ import {
   ioEvents,
 } from './enums/socket-enum';
 import { handleSendMessage } from './handlers/messages';
-import { handleOnlineUsers } from './handlers/get-users';
+import { listActiveUsers } from './handlers/get-users';
 import { handleJoinRoom } from './handlers/join-room';
+import { ActiveUsers } from './manager/active-users';
 dotenv.config();
 
 const app = express();
@@ -25,6 +26,7 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
     origin: '*',
   },
 });
+const activeUsers = ActiveUsers.getInstance();
 
 const PORT = +process.env.PORT! ?? 3000;
 
@@ -33,10 +35,12 @@ app.get('/', (_, res) => {
 });
 
 io.on(ioEvents.CONNECTION, (socket) => {
+  activeUsers.addUser(socket);
+
   socket.on('message', (message: IncomingMessage) => {
     console.log(message);
     if (message.type === SupportedMessage.GetUsers) {
-      handleOnlineUsers(io, socket, message.payload);
+      socket.emit('onlineUsers', listActiveUsers(socket));
     }
 
     if (message.type === SupportedMessage.JoinRoom) {
@@ -51,8 +55,8 @@ io.on(ioEvents.CONNECTION, (socket) => {
     }
   });
 
-  socket.on(ioEvents.DISCONNECT, () => {
-    console.log('someone disconnected');
+  socket.on(ioEvents.DISCONNECT, (sock) => {
+    console.log(sock);
   });
 });
 

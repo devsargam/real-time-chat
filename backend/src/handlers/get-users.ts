@@ -1,11 +1,11 @@
-import { Server, Socket } from 'socket.io';
-import { GetUsersType } from '../messages/incoming-messages';
+import { Socket } from 'socket.io';
+import { ActiveUsers } from '../manager/active-users';
 
-const handleOnlineUsers = (
-  io: Server,
-  socket: Socket,
-  payload: GetUsersType,
-): void => {
-  console.log(io.sockets.sockets.size);
+const listActiveUsers = (socket: Socket): void => {
+  const activeUsers = ActiveUsers.getInstance();
+
+  console.log(activeUsers.listUsers());
+
+  socket.broadcast.emit('message', activeUsers.listUsers());
 };
-export { handleOnlineUsers };
+export { listActiveUsers };

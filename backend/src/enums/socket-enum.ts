@@ -9,6 +9,7 @@ export interface ServerToClientEvents {
   message: (msg: string) => void;
   event: () => void;
   users: (sth: any) => void;
+  onlineUsers: (sth: any) => any;
 }
 
 export interface ClientToServerEvents {
