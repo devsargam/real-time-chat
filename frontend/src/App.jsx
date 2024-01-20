@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { socket } from './socket';
 import Homepage from './Components/Homepage/Homepage';
 import { Login } from './Components/Homepage/Login';
+import Sidebar from './Components/Sidebar';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -13,6 +14,8 @@ const App = () => {
   const [userCount, setUserCount] = useState(0);
 
   useEffect(() => {
+    socket.connect();
+
     function onConnect() {
       setIsConnected(true);
     }
@@ -36,6 +39,7 @@ const App = () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('message', onMessage);
+      socket.disconnect();
     };
   }, []);
 
@@ -45,10 +49,12 @@ const App = () => {
         type: 'JOIN_ROOM',
         payload: { name: user.username, userId: user.userId, roomId: 1 },
       });
-      socket.send({
-        type: 'USERS_COUNT',
-        payload: { roomId: 1 },
-      });
+      setTimeout(() => {
+        socket.emit('meesage', {
+          type: 'USERS_COUNT',
+          payload: { roomId: 1 },
+        });
+      }, 1000);
     }
   }, [isConnected, user.username, user.userId]);
 
@@ -56,14 +62,13 @@ const App = () => {
     return <Login setUser={setUser} />;
   }
 
+  if (!isConnected) {
+    return <h1>Connecting....</h1>;
+  }
+
   return (
     <>
-      {/* <Sidebar /> */}
-      {JSON.stringify({
-        isConnected,
-        messages,
-        userCount,
-      })}
+      <Sidebar />
       {/* <Homepage /> */}
     </>
   );
