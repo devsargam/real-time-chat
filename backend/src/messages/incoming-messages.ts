@@ -4,21 +4,26 @@ export enum SupportedMessage {
   JoinRoom = 'JOIN_ROOM',
   SendMessage = 'SEND_MESSAGE',
   GetUsers = 'GET_USERS',
+  SendDm = 'SEND_DM',
 }
 
 export type IncomingMessage =
   | {
-      type: SupportedMessage.JoinRoom;
-      payload: InitMessageType;
-    }
+    type: SupportedMessage.JoinRoom;
+    payload: InitMessageType;
+  }
   | {
-      type: SupportedMessage.SendMessage;
-      payload: UserMessageType;
-    }
+    type: SupportedMessage.SendMessage;
+    payload: UserMessageType;
+  }
   | {
-      type: SupportedMessage.GetUsers;
-      payload: GetUsersType;
-    };
+    type: SupportedMessage.GetUsers;
+    payload: GetUsersType;
+  }
+  | {
+    type: SupportedMessage.SendDm;
+    payload: SendDmType
+  };
 
 export const InitMessage = z.object({
   name: z.string(),
@@ -41,3 +46,11 @@ export const GetUsers = z.object({
 });
 
 export type GetUsersType = z.infer<typeof GetUsers>;
+
+export const SendDm = z.object({
+  userId: z.string(),
+  message: z.string(),
+  timestamp: z.date(),
+});
+
+export type SendDmType = z.infer<typeof SendDm>;

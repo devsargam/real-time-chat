@@ -19,7 +19,7 @@ export class ActiveUsers {
   }
 
   public listUsers(): Array<string> {
-    return Array.from(this.users.keys());
+    return Array.from(this.users.keys()) ?? [];
   }
 
   public addUser(socket: Socket) {
@@ -41,8 +41,7 @@ export class ActiveUsers {
   }
 
   public getUser(id: string) {
-    console.log(`${id} was searched`);
-    return this.users.get(id) ?? {};
+    return this.users.get(id);
   }
 
   private removeUser(id: string) {

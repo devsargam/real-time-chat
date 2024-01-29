@@ -1,7 +1,9 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import cors from 'cors';
+import 'dotenv/config';
 import { Server } from 'socket.io';
 import http from 'http';
+
 import {
   IncomingMessage,
   SupportedMessage,
@@ -15,10 +17,10 @@ import { handleSendMessage } from './handlers/messages';
 import { listActiveUsers } from './handlers/get-users';
 import { handleJoinRoom } from './handlers/join-room';
 import { ActiveUsers } from './manager/active-users';
-dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
@@ -32,6 +34,10 @@ const PORT = +process.env.PORT! ?? 3000;
 
 app.get('/', (_, res) => {
   res.send('Hello World');
+});
+
+app.get('/users', (_, res) => {
+  res.json(activeUsers.listUsers());
 });
 
 io.on(ioEvents.CONNECTION, (socket) => {
@@ -52,6 +58,10 @@ io.on(ioEvents.CONNECTION, (socket) => {
     if (message.type === SupportedMessage.SendMessage) {
       handleSendMessage(socket, message.payload);
       console.log(3);
+    }
+
+    if (message.type === SupportedMessage.SendDm) {
+      io.to(message.payload.userId).emit('message', message.payload.message);
     }
   });
 
