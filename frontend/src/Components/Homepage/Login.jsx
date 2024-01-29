@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { socket } from '../../socket';
 
 // eslint-disable-next-line react/prop-types
 export const Login = ({ setUser }) => {
@@ -9,6 +10,13 @@ export const Login = ({ setUser }) => {
       userId: Math.floor(Math.random() * 10000),
       username,
     });
+    socket.emit('message', {
+      type: 'SET_DETAILS',
+      payload: {
+        username,
+      },
+    });
+    console.log('sent the username');
   };
 
   return (

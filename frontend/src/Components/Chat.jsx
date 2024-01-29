@@ -1,11 +1,11 @@
-import React from "react";
-import { FaVideo } from "react-icons/fa";
-import { IoCall } from "react-icons/io5";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { IoSend } from "react-icons/io5";
-import { CgSmileMouthOpen } from "react-icons/cg";
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { CgSmileMouthOpen } from 'react-icons/cg';
+import { FaVideo } from 'react-icons/fa';
+import { IoCall, IoSend } from 'react-icons/io5';
+import PropTypes from 'prop-types';
 
-const MainPage = () => {
+export const Chat = ({ userId }) => {
+  console.log(userId);
   return (
     <div className="w-full">
       <div className="container flex flex-col justify-between h-full">
@@ -63,7 +63,7 @@ const MainPage = () => {
         {/* this is for the chat/text box section  */}
         <div className="textBoxsection">
           <div className="inputcontainer flex items-center w-full p-2 gap-2 border-2 border-gray-600  ">
-            <CgSmileMouthOpen size={"30px"} />
+            <CgSmileMouthOpen size={'30px'} />
 
             <input
               type="text"
@@ -78,4 +78,6 @@ const MainPage = () => {
   );
 };
 
-export default MainPage;
+Chat.propTypes = {
+  userId: PropTypes.string.isRequired,
+};

@@ -1,12 +1,11 @@
-import React from "react";
-import Sidebar from "../Sidebar";
-import MainPage from "../MainPage";
+import Sidebar from '../Sidebar';
+import { Chat } from '../Chat';
 
 const Homepage = () => {
   return (
     <div className="flex w-full">
       <Sidebar />
-      <MainPage />
+      <Chat userId="something" />
     </div>
   );
 };

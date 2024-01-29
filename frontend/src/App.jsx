@@ -43,21 +43,6 @@ const App = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (isConnected && user.username) {
-      socket.send({
-        type: 'JOIN_ROOM',
-        payload: { name: user.username, userId: user.userId, roomId: 1 },
-      });
-      setTimeout(() => {
-        socket.emit('meesage', {
-          type: 'USERS_COUNT',
-          payload: { roomId: 1 },
-        });
-      }, 1000);
-    }
-  }, [isConnected, user.username, user.userId]);
-
   if (!user.username) {
     return <Login setUser={setUser} />;
   }
@@ -68,8 +53,7 @@ const App = () => {
 
   return (
     <>
-      <Sidebar />
-      {/* <Homepage /> */}
+      <Homepage />
     </>
   );
 };
