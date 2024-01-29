@@ -44,7 +44,12 @@ io.on(ioEvents.CONNECTION, (socket) => {
   activeUsers.addUser(socket);
 
   socket.on('message', (message: IncomingMessage) => {
-    console.log(message);
+    console.log(socket.id);
+
+    if (message.type === SupportedMessage.SetDetails) {
+      activeUsers.addUsername(socket, message.payload.username);
+    }
+
     if (message.type === SupportedMessage.GetUsers) {
       socket.emit('onlineUsers', listActiveUsers(socket));
     }

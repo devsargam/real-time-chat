@@ -1,7 +1,13 @@
 import { Socket } from 'socket.io';
 import { ioEvents } from '../enums/socket-enum';
 
-type Users = Socket;
+type Users = {
+  id: string;
+  sock: Socket;
+  username?: string;
+};
+
+type UsersWithoutSocket = Omit<Users, 'sock'>;
 
 export class ActiveUsers {
   private static instance: ActiveUsers;
@@ -18,8 +24,12 @@ export class ActiveUsers {
     return ActiveUsers.instance;
   }
 
-  public listUsers(): Array<string> {
-    return Array.from(this.users.keys()) ?? [];
+  public listUsers(): UsersWithoutSocket[] {
+    const users: UsersWithoutSocket[] = [];
+    this.users.forEach((user) => {
+      users.push({ id: user.sock.id, username: user.username });
+    });
+    return users;
   }
 
   public addUser(socket: Socket) {
@@ -29,7 +39,7 @@ export class ActiveUsers {
     console.log(`${id} was added`);
     if (this.users.get(id)) throw new Error('User alreay exists');
 
-    this.users.set(id, socket);
+    this.users.set(id, { sock: socket, id });
 
     socket.broadcast.emit('onlineUsers', this.listUsers());
 
@@ -38,6 +48,14 @@ export class ActiveUsers {
       this.removeUser(socket.id);
       socket.broadcast.emit('onlineUsers', this.listUsers());
     });
+  }
+
+  public addUsername(socket: Socket, username: string) {
+    const { id: socketId } = socket;
+    if (!this.users.get(socketId))
+      throw new Error('User not found with socketId');
+
+    this.users.set(socketId, { id: socketId, sock: socket, username });
   }
 
   public getUser(id: string) {

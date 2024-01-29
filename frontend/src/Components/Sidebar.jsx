@@ -1,30 +1,17 @@
 import Infobox from './Infobox';
-import { socket } from '../socket';
 import { useEffect, useState } from 'react';
 
 const Sidebar = () => {
-  const [users, SetUsers] = useState([]);
-
-  const onUsers = (data) => {
-    console.log(data);
-    SetUsers(data ?? []);
-  };
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    socket.on('onlineUsers', onUsers);
+    fetch('http://localhost:3000/users')
+      .then((res) => res.json())
+      .then((usersFromRes) => {
+        if (!usersFromRes) return;
 
-    return () => {
-      socket.off('online-users', onUsers);
-    };
-  }, []);
-
-  useEffect(() => {
-    socket.send({
-      type: 'GET_USERS',
-      payload: {
-        roomId: 1,
-      },
-    });
+        setUsers(usersFromRes);
+      });
   }, []);
 
   return (
@@ -33,12 +20,11 @@ const Sidebar = () => {
         <p>Guff Gaff</p>
       </div>
       <div className="flex flex-col gap-1 ">
-        {JSON.stringify(users)}
         {!users.length ? (
-          <Infobox />
+          <h1>No Users Online</h1>
         ) : (
-          users.map((user) => {
-            return <Infobox />;
+          users.map((user, index) => {
+            return <Infobox key={index} username={user.username} />;
           })
         )}
       </div>
